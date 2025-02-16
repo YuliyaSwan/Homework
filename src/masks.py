@@ -2,10 +2,8 @@
 который показывает несколько последних успешных банковских операций клиента. Вам доверили реализовать
 этот проект, который на бэкенде будет готовить данные для отображения в новом виджете."""
 
-from typing import Any
 
-
-def get_mask_card_number(card_number: int) -> Any:
+def get_mask_card_number(card_number: int) -> str:
     """Функция принимает на вход номер карты и возвращает ее маску. Номер карты замаскирован и
     отображается в формате XXXX XX** **** XXXX, где X — это цифра номера. То есть видны первые 6 цифр и
     последние 4 цифры, остальные символы отображаются звездочками, номер разбит по блокам по 4 цифры,
@@ -23,13 +21,13 @@ def get_mask_card_number(card_number: int) -> Any:
     new_card_number = card_number_str[:6] + n * symbol + card_number_str[-4:]
 
     # Делю номер карты на группы по 4 цифры
-    groups = [new_card_number[i: i + 4] for i in range(0, length, 4)]
+    groups = [new_card_number[i : i + 4] for i in range(0, length, 4)]
     mask_card_number = " ".join(groups)
 
     return mask_card_number
 
 
-def get_mask_account(account: int) -> Any:
+def get_mask_account(account: int) -> str:
     """Функция принимает на вход номер счета и возвращает его маску. Номер счета замаскирован и
     отображается в формате **XXXX, где X — это цифра номера."""
 
