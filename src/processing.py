@@ -2,8 +2,9 @@ from typing import Dict, List, Optional
 
 
 def filter_by_state(transactions: List[Dict], state: Optional[str] = "EXECUTED") -> List[Dict]:
-    """Функция принимает список словарей и опционально значение для ключа state. Возвращает новый список словарей,
-    содержащий только те словари, у которых ключ state соответствует указанному значению.
+    """Функция принимает список словарей с данными о банковских операциях и опционально значение для ключа state.
+    Возвращает новый список словарей, содержащий только те словари, у которых ключ state соответствует указанному
+    значению.
     """
     return [transaction for transaction in transactions if transaction.get("state") == state]
 
