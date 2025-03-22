@@ -9,19 +9,18 @@ def get_mask_card_number(card_number: int) -> str:
     последние 4 цифры, остальные символы отображаются звездочками, номер разбит по блокам по 4 цифры,
     разделенным пробелами."""
 
-    # Длина номера карты (обычно 16)
-    card_number_str = str(card_number)  # Переводим данные в строку
-    length = int(len(card_number_str))
+    if not isinstance(card_number, int):
+        raise TypeError("Ошибка типа данных")
 
-    # Определяю количество скрытых символов и обозначаю символ
-    n = length - (6 + 4)
-    symbol = "*"
+    # Длина номера карты (обычно 16)
+    if len(str(card_number)) != 16:
+        raise ValueError("Неверный номер карты")
 
     # Выделяю первые 6 и последние 4 цифры карты
-    new_card_number = card_number_str[:6] + n * symbol + card_number_str[-4:]
+    new_card_number = str(card_number)[:6] + "******" + str(card_number)[-4:]
 
     # Делю номер карты на группы по 4 цифры
-    groups = [new_card_number[i: i + 4] for i in range(0, length, 4)]
+    groups = [new_card_number[i: i + 4] for i in range(0, len(str(card_number)), 4)]
     mask_card_number = " ".join(groups)
 
     return mask_card_number
@@ -31,13 +30,13 @@ def get_mask_account(account: int) -> str:
     """Функция принимает на вход номер счета и возвращает его маску. Номер счета замаскирован и
     отображается в формате **XXXX, где X — это цифра номера."""
 
+    if not isinstance(account, int):
+        raise TypeError("Ошибка типа данных")
+
+    # Длина номера карты (обычно 20)
+    if len(str(account)) != 20:
+        raise ValueError("Неверный номер счета")
+
     # Выделяю последние 4 цифры счета
-    account_str = str(account)  # Переводим данные в строку
-    mask_account = "**" + account_str[-4:]
-
+    mask_account = "**" + str(account)[-4:]
     return mask_account
-
-
-if __name__ == "__main__":
-    print(get_mask_card_number(7000792289606361))  # выход функции 7000 79** **** 6361
-    print(get_mask_account(73654108430135874305))  # выход функции **4305
