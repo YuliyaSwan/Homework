@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 from src.masks import get_mask_account, get_mask_card_number
 from src.processing import filter_by_state, sort_by_date
@@ -28,8 +30,8 @@ if __name__ == "__main__":
         {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
         {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
     ]
-    print(filter_by_state(transactions, state="EXECUTED"))
-    print(sort_by_date(transactions, reverse=True))
+    pprint(filter_by_state(transactions, state="EXECUTED"))
+    pprint(sort_by_date(transactions, reverse=True))
 
     transactions = [
         {
@@ -79,6 +81,6 @@ if __name__ == "__main__":
         },
     ]
 
-    print(filter_by_currency(transactions, code="USD"))
-    print(transaction_descriptions(transactions))
-    print(card_number_generator(1, 5))
+    pprint(list(filter_by_currency(transactions, code="USD")))
+    pprint(list(transaction_descriptions(transactions)))
+    pprint(list(card_number_generator(1, 5)))
