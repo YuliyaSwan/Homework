@@ -1,13 +1,14 @@
-import requests
+import os
 from decimal import Decimal
 
-# from pprint import pprint
-#
-# from src.utils import load_transactions
-# from tests.test_processing import transactions
+import requests
+from dotenv import load_dotenv
 
-# Кэш для курсов валют
-exchange_rate_cache: dict[str, Decimal] = {}
+# from pprint import pprint
+
+# Загружаем переменные окружения из файла .env
+load_dotenv(".env")
+API_KEY = os.getenv("API_KEY")
 
 
 def get_exchange_rate(currency_code: str) -> Decimal | None:
@@ -20,19 +21,17 @@ def get_exchange_rate(currency_code: str) -> Decimal | None:
     if currency_code == "RUB":
         return Decimal("1.0")
 
-    if currency_code in exchange_rate_cache:
-        return exchange_rate_cache[currency_code]
+    url = "https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency_code}&amount=1"
 
-    url = "https://www.cbr-xml-daily.ru/daily_json.js"
+    headers = {"apikey": API_KEY}
+
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
         data = response.json()
-        rate = data["Valute"].get(currency_code, {}).get("Value")
+        rate = data.get("result")
         if rate:
-            exchange_rate = Decimal(str(rate))
-            exchange_rate_cache[currency_code] = exchange_rate
-            return exchange_rate
+            return Decimal(str(rate))
     except Exception as e:
         print(f"Ошибка при получении курса валют: {e}")
     return None

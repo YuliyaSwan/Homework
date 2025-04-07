@@ -95,4 +95,4 @@ if __name__ == "__main__":
         amount_rub = convert_to_rub(tx)
         if amount_rub is not None:
             pprint(convert_to_rub(tx))
-    #       print(f"ID: {tx.get('id')} | RUB Amount: {amount_rub}")
+    #       print(f"ID: {tx.get('id')} | Сумма в рублях: {amount_rub}")

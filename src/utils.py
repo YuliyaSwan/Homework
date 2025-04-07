@@ -6,6 +6,11 @@ from typing import Any, List
 
 
 def load_transactions(file_path: str) -> List[dict[str, Any]]:
+    """
+    Функция, которая принимает на вход путь до JSON-файла и возвращает список словарей с данными о финансовых
+    транзакциях. Если файл пустой, содержит не список или не найден, функция возвращает пустой список.
+    """
+
     if not os.path.exists(file_path):
         return []
 
