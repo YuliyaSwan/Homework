@@ -1,8 +1,10 @@
 from pprint import pprint
 
+from src.external_api import convert_to_rub, get_exchange_rate
 from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 from src.masks import get_mask_account, get_mask_card_number
 from src.processing import filter_by_state, sort_by_date
+from src.utils import load_transactions
 from src.widget import get_date, mask_account_card
 
 if __name__ == "__main__":
@@ -84,3 +86,13 @@ if __name__ == "__main__":
     pprint(list(filter_by_currency(transactions, code="USD")))
     pprint(list(transaction_descriptions(transactions)))
     pprint(list(card_number_generator(1, 5)))
+
+    pprint(load_transactions("./data/operations.json"))
+    pprint(get_exchange_rate('USD'))
+
+    transactions = load_transactions("./data/operations.json")
+    for tx in transactions:
+        amount_rub = convert_to_rub(tx)
+        if amount_rub is not None:
+            pprint(convert_to_rub(tx))
+    #       print(f"ID: {tx.get('id')} | Сумма в рублях: {amount_rub}")
