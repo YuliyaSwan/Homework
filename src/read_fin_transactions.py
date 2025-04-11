@@ -1,11 +1,11 @@
 import csv
 import os
-from typing import Any, List
+from typing import Any, Dict, Hashable, List
 
 import pandas as pd
 
 
-def read_csv_transactions(file_csv: str) -> List[List[str]]:
+def read_csv_transactions(file_csv: str) -> List[Dict[str, Any]]:
     """
     Функция принимает путь до CSV-файла и возвращает список строк (каждая строка — список значений).
     Если файл не найден или произошла ошибка, возвращает пустой список.
@@ -19,7 +19,7 @@ def read_csv_transactions(file_csv: str) -> List[List[str]]:
 
     try:
         with open(file_csv, "r", encoding="utf-8") as file:
-            reader = csv.reader(file, delimiter=";")
+            reader = csv.DictReader(file, delimiter=";")
             for row in reader:
                 transactions.append(row)
 
@@ -35,7 +35,7 @@ def read_csv_transactions(file_csv: str) -> List[List[str]]:
     return transactions
 
 
-def read_excel_transactions(file_excel: str) -> List[List[Any]]:
+def read_excel_transactions(file_excel: str) -> List[Dict[Hashable, Any]]:
     """
     Функция принимает путь до Excel-файла и возвращает список строк (каждая строка — список значений).
     Если файл не найден или произошла ошибка, возвращает пустой список.
@@ -49,7 +49,7 @@ def read_excel_transactions(file_excel: str) -> List[List[Any]]:
         excel_data = pd.read_excel(file_excel)
         print(excel_data.shape)
         print(excel_data.head())
-        return excel_data.values.tolist()
+        return excel_data.to_dict(orient="records")
     except FileNotFoundError:
         print("Файл не существует.")
     except ValueError as ve:

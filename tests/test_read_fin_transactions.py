@@ -10,19 +10,21 @@ class TestFileReaders(unittest.TestCase):
 
     # Тесты для read_csv_transactions
 
+    @patch(
+        "builtins.open",
+        mock_open(read_data="Date;Amount;Category\n2024-01-01;100;Groceries\n2024-01-02;200;Transportation"),
+    )
     @patch("os.path.exists", return_value=True)
-    def test_read_csv_transactions_success(self, mock_exists: MagicMock) -> None:
-        csv_data = "date;amount;currency\n2024-01-01;100;USD\n2024-01-02;200;EUR"
-        with patch("builtins.open", mock_open(read_data=csv_data)):
-            result = read_csv_transactions("dummy.csv")
-            self.assertEqual(
-                result,
-                [
-                    ["date", "amount", "currency"],
-                    ["2024-01-01", "100", "USD"],
-                    ["2024-01-02", "200", "EUR"],
-                ],
-            )
+    def test_read_csv_transactions(self, mock_exists: MagicMock) -> None:
+        result = read_csv_transactions("dummy.csv")
+
+        expected = [
+            {"Date": "2024-01-01", "Amount": "100", "Category": "Groceries"},
+            {"Date": "2024-01-02", "Amount": "200", "Category": "Transportation"},
+        ]
+
+        self.assertEqual(result, expected)
+        mock_exists.assert_called_with("dummy.csv")
 
     @patch("os.path.exists", return_value=False)
     def test_read_csv_file_not_found(self, mock_exists: MagicMock) -> None:
@@ -45,7 +47,7 @@ class TestFileReaders(unittest.TestCase):
         mock_read_excel.return_value = mock_df
 
         result = read_excel_transactions("dummy.xlsx")
-        self.assertEqual(result, [["2024-01-01", 100], ["2024-01-02", 200]])
+        self.assertEqual(result, [{"Date": "2024-01-01", "Amount": 100}, {"Date": "2024-01-02", "Amount": 200}])
 
     @patch("os.path.exists", return_value=False)
     def test_read_excel_file_not_found(self, mock_exists: MagicMock) -> None:
