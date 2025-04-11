@@ -1,0 +1,65 @@
+import unittest
+from unittest.mock import MagicMock, mock_open, patch
+
+import pandas as pd
+
+from src.read_fin_transactions import read_csv_transactions, read_excel_transactions
+
+
+class TestFileReaders(unittest.TestCase):
+
+    # Тесты для read_csv_transactions
+
+    @patch("os.path.exists", return_value=True)
+    def test_read_csv_transactions_success(self, mock_exists: MagicMock) -> None:
+        csv_data = "date;amount;currency\n2024-01-01;100;USD\n2024-01-02;200;EUR"
+        with patch("builtins.open", mock_open(read_data=csv_data)):
+            result = read_csv_transactions("dummy.csv")
+            self.assertEqual(
+                result,
+                [
+                    ["date", "amount", "currency"],
+                    ["2024-01-01", "100", "USD"],
+                    ["2024-01-02", "200", "EUR"],
+                ],
+            )
+
+    @patch("os.path.exists", return_value=False)
+    def test_read_csv_file_not_found(self, mock_exists: MagicMock) -> None:
+        result = read_csv_transactions("missing.csv")
+        self.assertEqual(result, [])
+
+    @patch("os.path.exists", return_value=True)
+    def test_read_csv_decode_error(self, mock_exists: MagicMock) -> None:
+        with patch("builtins.open", mock_open()) as m:
+            m.side_effect = UnicodeDecodeError("utf-8", b"", 0, 1, "reason")
+            result = read_csv_transactions("bad_encoding.csv")
+            self.assertEqual(result, [])
+
+    # Тесты для read_excel_transactions
+
+    @patch("os.path.exists", return_value=True)
+    @patch("pandas.read_excel")
+    def test_read_excel_transactions_success(self, mock_read_excel: MagicMock, mock_exists: MagicMock) -> None:
+        mock_df = pd.DataFrame({"Date": ["2024-01-01", "2024-01-02"], "Amount": [100, 200]})
+        mock_read_excel.return_value = mock_df
+
+        result = read_excel_transactions("dummy.xlsx")
+        self.assertEqual(result, [["2024-01-01", 100], ["2024-01-02", 200]])
+
+    @patch("os.path.exists", return_value=False)
+    def test_read_excel_file_not_found(self, mock_exists: MagicMock) -> None:
+        result = read_excel_transactions("missing.xlsx")
+        self.assertEqual(result, [])
+
+    @patch("os.path.exists", return_value=True)
+    @patch("pandas.read_excel", side_effect=ValueError("Ошибка чтения"))
+    def test_read_excel_value_error(self, mock_read_excel: MagicMock, mock_exists: MagicMock) -> None:
+        result = read_excel_transactions("bad.xlsx")
+        self.assertEqual(result, [])
+
+    @patch("os.path.exists", return_value=True)
+    @patch("pandas.read_excel", side_effect=pd.errors.EmptyDataError("пустой файл"))
+    def test_read_excel_empty_file(self, mock_read_excel: MagicMock, mock_exists: MagicMock) -> None:
+        result = read_excel_transactions("empty.xlsx")
+        self.assertEqual(result, [])

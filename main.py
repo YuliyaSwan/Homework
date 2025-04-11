@@ -4,6 +4,7 @@ from src.external_api import convert_to_rub, get_exchange_rate
 from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 from src.masks import get_mask_account, get_mask_card_number
 from src.processing import filter_by_state, sort_by_date
+from src.read_fin_transactions import read_csv_transactions, read_excel_transactions
 from src.utils import load_transactions
 from src.widget import get_date, mask_account_card
 
@@ -96,3 +97,7 @@ if __name__ == "__main__":
         if amount_rub is not None:
             pprint(convert_to_rub(tx))
     #       print(f"ID: {tx.get('id')} | Сумма в рублях: {amount_rub}")
+
+    pprint(read_csv_transactions("./data/transactions.csv"))
+
+    pprint(read_excel_transactions("./data/transactions_excel.xlsx"))
