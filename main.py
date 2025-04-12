@@ -3,7 +3,7 @@ from pprint import pprint
 from src.external_api import convert_to_rub, get_exchange_rate
 from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 from src.masks import get_mask_account, get_mask_card_number
-from src.processing import filter_by_state, sort_by_date
+from src.processing import categorize_operations, extract_unique_categories, filter_by_state, find_by_key, sort_by_date
 from src.read_fin_transactions import read_csv_transactions, read_excel_transactions
 from src.utils import load_transactions
 from src.widget import get_date, mask_account_card
@@ -89,15 +89,29 @@ if __name__ == "__main__":
     pprint(list(card_number_generator(1, 5)))
 
     pprint(load_transactions("./data/operations.json"))
-    pprint(get_exchange_rate('USD'))
+    pprint(get_exchange_rate("USD"))
 
     transactions = load_transactions("./data/operations.json")
     for tx in transactions:
         amount_rub = convert_to_rub(tx)
         if amount_rub is not None:
             pprint(convert_to_rub(tx))
-    #       print(f"ID: {tx.get('id')} | Сумма в рублях: {amount_rub}")
+        # print(f"ID: {tx.get('id')} | Сумма в рублях: {amount_rub}")
 
     pprint(read_csv_transactions("./data/transactions.csv"))
 
     pprint(read_excel_transactions("./data/transactions_excel.xlsx"))
+
+    pprint(find_by_key(load_transactions("./data/operations.json"), "operationAmount", "RUB"))
+    pprint(find_by_key(read_csv_transactions("./data/transactions.csv"), "description", "Перевод организации"))
+    pprint(find_by_key(read_excel_transactions("./data/transactions_excel.xlsx"), "state", "CANCELED"))
+
+    categories = extract_unique_categories(load_transactions("./data/operations.json"))
+    pprint(categorize_operations(load_transactions("./data/operations.json"), categories))
+
+    categories = extract_unique_categories(read_csv_transactions("./data/transactions.csv"))
+    pprint(categorize_operations(read_csv_transactions("./data/transactions.csv"), categories))
+
+    categories = extract_unique_categories(read_excel_transactions("./data/transactions_excel.xlsx"))
+    pprint(categories)
+    pprint(categorize_operations(read_excel_transactions("./data/transactions_excel.xlsx"), categories))
