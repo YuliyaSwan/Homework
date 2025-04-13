@@ -12,13 +12,13 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def get_mask_card_number(card_number: int) -> str:
+def get_mask_card_number(card_number: str) -> str:
     """Функция принимает на вход номер карты и возвращает ее маску. Номер карты замаскирован и
     отображается в формате XXXX XX** **** XXXX, где X — это цифра номера. То есть видны первые 6 цифр и
     последние 4 цифры, остальные символы отображаются звездочками, номер разбит по блокам по 4 цифры,
     разделенным пробелами."""
 
-    if not isinstance(card_number, int):
+    if not isinstance(card_number, str):
         logger.error("Ошибка типа вводимых данных")
         raise TypeError("Ошибка типа данных")
 

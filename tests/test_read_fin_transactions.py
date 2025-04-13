@@ -38,6 +38,26 @@ class TestFileReaders(unittest.TestCase):
             result = read_csv_transactions("bad_encoding.csv")
             self.assertEqual(result, [])
 
+    @patch("os.path.exists", return_value=True)
+    def test_read_csv_empty_row(self, mock_exists: MagicMock) -> None:
+        # Тестируем пустую строку
+        with patch("builtins.open", mock_open(read_data="Date;Amount;Category\n")):
+            result = read_csv_transactions("empty_row.csv")
+            self.assertEqual(result, [])
+
+    @patch("os.path.exists", return_value=True)
+    def test_read_csv_missing_column(self, mock_exists: MagicMock) -> None:
+        # Тестируем случай, когда колонка отсутствует
+        with patch("builtins.open", mock_open(read_data="Date;Amount\n2024-01-01;100\n2024-01-02;200")):
+            result = read_csv_transactions("missing_column.csv")
+            self.assertEqual(
+                result,
+                [
+                    {"Date": "2024-01-01", "Amount": "100"},
+                    {"Date": "2024-01-02", "Amount": "200"},
+                ],
+            )
+
     # Тесты для read_excel_transactions
 
     @patch("os.path.exists", return_value=True)
@@ -64,4 +84,16 @@ class TestFileReaders(unittest.TestCase):
     @patch("pandas.read_excel", side_effect=pd.errors.EmptyDataError("пустой файл"))
     def test_read_excel_empty_file(self, mock_read_excel: MagicMock, mock_exists: MagicMock) -> None:
         result = read_excel_transactions("empty.xlsx")
+        self.assertEqual(result, [])
+
+    @patch("os.path.exists", return_value=True)
+    @patch("pandas.read_excel", side_effect=TypeError("Ошибка обработки"))
+    def test_read_excel_type_error(self, mock_read_excel: MagicMock, mock_exists: MagicMock) -> None:
+        result = read_excel_transactions("type_error.xlsx")
+        self.assertEqual(result, [])
+
+    @patch("os.path.exists", return_value=True)
+    @patch("pandas.read_excel", side_effect=KeyError("Ошибка ключа"))
+    def test_read_excel_key_error(self, mock_read_excel: MagicMock, mock_exists: MagicMock) -> None:
+        result = read_excel_transactions("key_error.xlsx")
         self.assertEqual(result, [])

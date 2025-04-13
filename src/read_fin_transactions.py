@@ -47,9 +47,11 @@ def read_excel_transactions(file_excel: str) -> List[Dict[Hashable, Any]]:
 
     try:
         excel_data = pd.read_excel(file_excel)
-        print(excel_data.shape)
-        print(excel_data.head())
-        return excel_data.to_dict(orient="records")
+        # print(excel_data.shape)
+        # print(excel_data.head())
+        df_cleaned = excel_data.dropna(how="all")
+        # df_cleaned.to_excel(output_path, index=False)
+        return df_cleaned.to_dict(orient="records")
     except FileNotFoundError:
         print("Файл не существует.")
     except ValueError as ve:
