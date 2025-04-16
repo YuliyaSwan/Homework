@@ -24,18 +24,18 @@ def test_get_mask_card_number_length_not_16(card_number: str) -> None:
 
 # Тестирование правильности маскирования номера счета.
 def test_get_mask_account() -> None:
-    assert get_mask_account(73654108430135874305) == "**4305"
+    assert get_mask_account("73654108430135874305") == "**4305"
 
 
 # Проверка работы функции с различными форматами номеров счетов.
-@pytest.mark.parametrize("account", ["73654108430135874305", 73654108430135874305.0, {}, [], (), " "])
+@pytest.mark.parametrize("account", [73654108430135874305, 73654108430135874305.0, {}, [], ()])
 def test_get_mask_account_wrong_type(account: str) -> None:
     with pytest.raises(TypeError):
         get_mask_account(account)
 
 
 # Проверка работы функции с различными длинами номеров счетов.
-@pytest.mark.parametrize("account", [736541084301358743050000, 700079228960, 0])
+@pytest.mark.parametrize("account", ["700079228960636100001111", "700079228960", "0"])
 def test_get_mask_account_length_not_20(account: int) -> None:
     with pytest.raises(ValueError):
         get_mask_account(account)

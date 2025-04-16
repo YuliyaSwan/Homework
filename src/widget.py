@@ -20,7 +20,7 @@ def mask_account_card(name_card_account: str) -> str:
         try:
             number = "".join(filter(str.isdigit, name_card_account))
             # number = int(name_card_account.replace("Счет", "").strip())  # Преобразуем в число
-            return "Счет " + get_mask_account(int(number))
+            return "Счет " + get_mask_account(number)
         except ValueError:
             return "Неверный формат счета"  # Неверный формат счета
 

@@ -94,10 +94,16 @@ def main():
                 direction = (
                     input("Программа: Отсортировать по возрастанию или по убыванию?\nПользователь: ").strip().lower()
                 )
-                ascending = direction == "по убыванию"
-                transactions = sort_by_date(transactions, ascending)
+                if direction in ["по возрастанию", "по убыванию"]:
+                     ascending = direction == "по убыванию"
+                     transactions = sort_by_date(transactions, ascending)
+                     break
+                else:
+                    print("Пожалуйста, введите 'по возрастанию' или 'по убыванию'.")
                 # pprint(transactions)
-            break
+            else:
+                # pprint(transactions)
+                break
         else:
             print("Пожалуйста, введите 'Да' или 'Нет'.")
 
@@ -125,14 +131,21 @@ def main():
             print("Пожалуйста, введите 'Да' или 'Нет'.")
 
     # Фильтр по ключевому слову в описании
-    keyword_filter = (
-        input("\nПрограмма: Отфильтровать список транзакций по определенному слову в описании? Да/Нет\nПользователь: ")
-        .strip()
-        .lower()
-    )
-    if keyword_filter == "да":
-        keyword = input("Введите слово для фильтрации по описанию: ").strip().lower()
-        transactions = [tx for tx in transactions if keyword in tx.get("description", "").lower()]
+    while True:
+        keyword_filter = (
+            input("\nПрограмма: Отфильтровать список транзакций по определенному слову в описании? Да/Нет\nПользователь: ")
+            .strip()
+            .lower()
+        )
+        if keyword_filter in ["да", "нет"]:
+            if keyword_filter == "да":
+                keyword = input("Введите слово для фильтрации по описанию: ").strip().lower()
+                transactions = [tx for tx in transactions if keyword in tx.get("description", "").lower()]
+                break
+            else:
+                break
+        else:
+            print("Пожалуйста, введите 'Да' или 'Нет'.")
 
     # Вывод финального списка транзакций
     if transactions:
@@ -152,8 +165,8 @@ def main():
             # Маскируем 'from' только если оно есть
             from_info = mask_account_card(tx.get("from", "")) if tx.get("from") else ""
 
-            # Маскируем 'to'
-            to_info = mask_account_card(tx.get("to", ""))
+            # Маскируем 'to' только если оно есть
+            to_info = mask_account_card(tx.get("to", "")) if tx.get("to") else ""
 
             # Маскируем 'from' и 'to' при наличии
             # from_info = mask_account_card(tx.get("from", ""))
@@ -173,8 +186,6 @@ def main():
                 print(f"{to_info}")
             elif from_info:
                 print(f"{from_info}")
-            else:
-                print("")
             print(f"Сумма: {amount} {currency}")
     else:
         print("Программа: Не найдено ни одной транзакции, подходящей под ваши условия фильтрации.")

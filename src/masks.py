@@ -39,11 +39,11 @@ def get_mask_card_number(card_number: str) -> str:
     return mask_card_number
 
 
-def get_mask_account(account: int) -> str:
+def get_mask_account(account: str) -> str:
     """Функция принимает на вход номер счета и возвращает его маску. Номер счета замаскирован и
     отображается в формате **XXXX, где X — это цифра номера."""
 
-    if not isinstance(account, int):
+    if not isinstance(account, str):
         logger.error("Ошибка типа вводимых данных")
         raise TypeError("Ошибка типа данных")
 
